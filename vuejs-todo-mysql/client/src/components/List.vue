@@ -3,7 +3,7 @@
      <div id="todo-list-example" class="container">
         <h1 class="text-center">List of Employee</h1>
         <br>
-        <form v-on:submit.prevent="addNewTask">
+        <form v-on:submit.prevent="addNewEmp">
            <div class="form-group row">
               <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Name</label>
               <div class="col-sm-6">
@@ -28,7 +28,7 @@
                  <button v-if="this.isEdit == false" type="submit" class="btn btn-success">
                  Submit
                  </button>
-                 <button v-else v-on:click="updateTask()" type="button" class="btn btn-primary">
+                 <button v-else v-on:click="updateEmp()" type="button" class="btn btn-primary">
                  Update
                  </button>
                  <button  type="button" class="btn btn-danger">
@@ -43,8 +43,8 @@
               <td class="text-left">{{todo.age}}</td>
               <td class="text-left">{{todo.comment}}</td>
               <td class="text-right">
-                 <button class="btn btn-info" v-on:click="editTask(todo.name, todo.id,todo.age, todo.comment)">Edit</button>
-                 <button class="btn btn-danger" v-on:click="deleteTask(todo.id)">Delete</button>
+                 <button class="btn btn-info" v-on:click="editEmp(todo.name, todo.id,todo.age, todo.comment)">Edit</button>
+                 <button class="btn btn-danger" v-on:click="deleteEmp(todo.id)">Delete</button>
               </td>
            </tr>
         </table>
@@ -70,10 +70,10 @@ export default {
     }
   },
   mounted () {
-    this.getTasks()
+    this.getEmp()
   },
   methods: {
-    getTasks () {
+    getEmp () {
       axios.get('/api/emp').then(
         result => {
           console.log(result.data)
@@ -84,40 +84,44 @@ export default {
         }
       )
     },
-    addNewTask () {
-      axios.post('/api/emp', { name: this.name })
+    addNewEmp () {
+      axios.post('/api/emp', {name: this.name, age: this.age, comment: this.comment})
         .then((res) => {
           this.name = ''
-          this.getTasks()
+          this.getEmp()
         }).catch((err) => {
           console.log(err)
         })
     },
-    editTask (name,id,age,comment) {
+    editEmp (name, id, age, comment) {
       this.id = id
       this.name = name
-      this.age =age
-      this.comment=comment
+      this.age = age
+      this.comment = comment
       this.isEdit = true
     },
-    updateTask () {
+    updateEmp () {
       axios.put(`/api/emp/${this.id}`,
-        { name: this.name })
+        {name: this.name, age: this.age, comment: this.comment})
         .then((res) => {
           this.name = ''
+          this.age = ''
+          this.comment = ''
           this.isEdit = false
-          this.getTasks()
+          this.getEmp()
           console.log(res)
         })
         .catch((err) => {
           console.log(err)
         })
     },
-    deleteTask (id) {
+    deleteEmp (id) {
       axios.delete(`/api/emp/${id}`)
         .then((res) => {
           this.name = ''
-          this.getTasks()
+          this.age = ''
+          this.comment = ''
+          this.getEmp()
           console.log(res)
         })
         .catch((err) => {
